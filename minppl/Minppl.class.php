@@ -5,8 +5,8 @@
  + Author       : 小黄牛
  + Version      : V1.0.0.1
  + Initial-Time : 2017-08-20 12:32:00
- + Last-time    : 2017-08-21 15:32:00 + 小黄牛
- + Desc         : 
+ + Last-time    : 2017-08-21 16:28:00 + 小黄牛
+ + Desc         : 修改了一些bug
  +----------------------------------------------------------------------
 */
 
@@ -120,13 +120,14 @@ class Minppl{
 			}
 		}
 		
-		$count = count($key);
-		if ($count == 0) {
+		if (count($key) == 0) {
 			if ($this->mode) {
 				# 4、词库检索不行，就启动分词算法
-				return $this->Analysis();
+				$key = $this->Analysis();
+			}else{
+				return false;
 			}
-			return false;
+			
 		}
 		
 		# 排序
@@ -135,14 +136,23 @@ class Minppl{
 		}else{
 			rsort($key);
 		}
+
+		# 去重
+		$array = [];
+		foreach ($key as $k=>$v) {
+			unset($key[$k]);
+			if (!in_array($v, $key)) {
+				$array[] = $v;
+			}
+		}
 		
 		# 按长度返回
-		if ($count <= $this->num) {
-			return $key;
+		if (count($array) <= $this->num) {
+			return $array;
 		}else{
 			$data = [];
 			for($i = 0; $i < $this->num; $i++){
-				$data[] = $key[$i];
+				$data[] = $array[$i];
 			}
 			return $data;
 		}
